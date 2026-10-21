@@ -1,0 +1,545 @@
+/* =====================================================================
+   MediBook - shared styles used by every page
+   (extracted from the original index.php so all pages look the same)
+
+   1. Design tokens
+   2. Base styles
+   3. Navbar
+   4. Buttons
+   5. Forms & validation
+   6. Page banner & sections
+   7. Cards, tables, badges, alerts
+   8. Booking slots
+   9. Footer
+   ===================================================================== */
+
+/* 1. Design tokens */
+
+:root {
+    --primary: #1765e9;
+    --primary-dark: #104bb5;
+    --navy: #14284b;
+    --muted: #64748b;
+    --background: #f5f8ff;
+    --border: #e6edfa;
+    --white: #ffffff;
+}
+
+/* 2. Base styles */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--navy);
+    background: var(--white);
+    line-height: 1.6;
+}
+
+a {
+    text-decoration: none;
+}
+
+.section {
+    padding: 75px 0;
+}
+
+.section-soft {
+    background: var(--background);
+}
+
+.section-heading {
+    text-align: center;
+    max-width: 620px;
+    margin: 0 auto 38px;
+}
+
+.section-label {
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+}
+
+.section-heading h2,
+.page-banner h1 {
+    margin: 12px 0;
+    font-size: clamp(27px, 3vw, 38px);
+    font-weight: 800;
+    letter-spacing: -1.2px;
+}
+
+.section-heading p {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0;
+}
+
+/* Small banner used on every inner page (about, doctors, login...) */
+
+.page-banner {
+    background:
+        radial-gradient(ellipse at 85% 25%, #dceaff 0%, transparent 40%),
+        linear-gradient(120deg, #f5f8ff 0%, #eef5ff 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 48px 0;
+    text-align: center;
+}
+
+.page-banner p {
+    max-width: 560px;
+    margin: 0 auto;
+    color: var(--muted);
+    font-size: 15px;
+}
+
+/* 3. Navbar */
+
+.navbar {
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid #edf1f8;
+    padding: 19px 0;
+}
+
+.navbar-brand {
+    font-size: 27px;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -1px;
+}
+
+.brand-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    margin-right: 7px;
+    border-radius: 12px;
+    background: var(--primary);
+    color: white;
+    font-size: 25px;
+    vertical-align: middle;
+}
+
+.brand-dot {
+    color: var(--primary);
+}
+
+.navbar .nav-link {
+    color: #435574;
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 12px;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+    color: var(--primary);
+}
+
+.navbar .nav-link.logout-link {
+    color: var(--muted);
+}
+
+.navbar .nav-link.logout-link:hover {
+    color: #dc3545;
+}
+
+/* 4. Buttons */
+
+.btn-primary-custom {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    color: white;
+    border-radius: 10px;
+    padding: 14px 22px;
+    font-weight: 700;
+    font-size: 15px;
+    transition: 0.2s ease;
+}
+
+.btn-primary-custom:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn-outline-custom {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 1px solid #d6e2f5;
+    color: var(--navy);
+    border-radius: 10px;
+    padding: 13px 21px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.btn-outline-custom:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.btn-danger-soft {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #fdecec;
+    border: 1px solid #f6cfcf;
+    color: #c0392b;
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.btn-danger-soft:hover {
+    background: #f9d9d9;
+    color: #a5281b;
+}
+
+/* 5. Forms & validation */
+
+.form-label {
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.form-control,
+.form-select {
+    min-height: 50px;
+    border: 1px solid #dce5f2;
+    border-radius: 10px;
+    color: var(--navy);
+    font-size: 15px;
+    box-shadow: none !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary);
+}
+
+textarea.form-control {
+    min-height: 130px;
+}
+
+.form-text {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* Red outline + message for invalid fields (added by assets/js/main.js
+   and by Bootstrap's :invalid after a submit) */
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    background-image: none;
+}
+
+.field-error {
+    display: block;
+    margin-top: 5px;
+    color: #dc3545;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.auth-card {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 32px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 15px 45px rgba(34, 72, 130, 0.08);
+}
+
+.auth-card h1 {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.auth-card .auth-subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 22px;
+}
+
+.auth-links {
+    text-align: center;
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 18px;
+}
+
+.auth-links a {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+/* 6. Page banner & content blocks */
+
+.content-block h2 {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.content-block p {
+    color: var(--muted);
+    font-size: 15px;
+}
+
+.info-panel {
+    height: 100%;
+    padding: 28px;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+}
+
+.info-panel h3 {
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 14px;
+}
+
+.info-line {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+}
+
+.info-line:last-child {
+    border-bottom: 0;
+}
+
+.info-line strong {
+    display: block;
+    font-size: 13px;
+}
+
+.info-line span {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* 7. Cards, tables, badges, alerts */
+
+.card-soft {
+    height: 100%;
+    padding: 25px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    transition: 0.22s ease;
+}
+
+.card-soft:hover {
+    transform: translateY(-4px);
+    border-color: #c4d8ff;
+    box-shadow: 0 15px 35px rgba(32, 83, 160, 0.09);
+}
+
+.avatar-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 58px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #eaf2ff;
+    color: var(--primary);
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.table-soft {
+    --bs-table-bg: transparent;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.table-soft thead th {
+    color: var(--muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    border-bottom-width: 1px;
+}
+
+.data-table-wrap {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    padding: 8px 18px;
+}
+
+.alert {
+    border-radius: 12px;
+    font-size: 14px;
+}
+
+/* 8. Booking slots */
+
+.slot-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+}
+
+.slot-btn {
+    padding: 11px 8px;
+    border: 1px solid #d6e2f5;
+    border-radius: 10px;
+    background: white;
+    color: var(--navy);
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.15s ease;
+}
+
+.slot-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.slot-btn input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.slot-btn.selected {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+.slot-btn.booked {
+    background: #f1f5f9;
+    border-color: #e6edfa;
+    color: #a3b1c6;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.selected-slot-note {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+/* 9. Footer */
+
+footer {
+    background: #10213e;
+    color: #c9d5e8;
+    padding: 55px 0 22px;
+}
+
+.footer-brand {
+    color: white;
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.footer-plus {
+    color: #74a8ff;
+}
+
+.footer-description {
+    max-width: 280px;
+    color: #aebdd3;
+    font-size: 13px;
+}
+
+.footer-heading {
+    color: white;
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 17px;
+}
+
+.footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.footer-links a {
+    color: #c9d5e8;
+    font-size: 13px;
+}
+
+.footer-links a:hover {
+    color: white;
+}
+
+.footer-bottom {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.13);
+    text-align: center;
+    color: #aebdd3;
+    font-size: 12px;
+}
+
+/* Wider container on big screens (same as the original homepage) */
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1360px;
+    }
+}
+
+/* Responsive adjustments */
+
+@media (max-width: 991px) {
+    .navbar {
+        padding: 12px 0;
+    }
+
+    .navbar .nav-link {
+        margin: 4px 0;
+    }
+}
+
+@media (max-width: 575px) {
+    .section {
+        padding: 55px 0;
+    }
+
+    .auth-card {
+        padding: 24px;
+    }
+
+    .page-banner {
+        padding: 35px 0;
+    }
+}

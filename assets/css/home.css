@@ -1,0 +1,533 @@
+/* =====================================================================
+   MediBook - styles used ONLY on the homepage (index.php)
+   Extracted from the original inline <style> block. The shared look
+   (navbar, buttons, forms, footer) lives in style.css.
+   ===================================================================== */
+
+/* Hero */
+
+.hero {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse at 85% 25%, #dceaff 0%, transparent 40%),
+        linear-gradient(120deg, #f5f8ff 0%, #eef5ff 100%);
+    padding: 95px 0 115px;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    right: -170px;
+    top: -180px;
+    border-radius: 50%;
+    border: 1px solid rgba(23, 101, 233, 0.1);
+    box-shadow: 0 0 0 45px rgba(23, 101, 233, 0.025),
+                0 0 0 90px rgba(23, 101, 233, 0.02);
+}
+
+.hero .container {
+    position: relative;
+    z-index: 1;
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--primary);
+    background: #e6efff;
+    border: 1px solid #d8e6ff;
+    border-radius: 30px;
+    padding: 7px 13px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.hero h1 {
+    margin: 28px 0 24px;
+    color: var(--navy);
+    font-size: clamp(46px, 4.5vw, 70px);
+    font-weight: 800;
+    letter-spacing: -2.6px;
+    line-height: 1.13;
+}
+
+.hero h1 span {
+    color: var(--primary);
+}
+
+.hero-description {
+    max-width: 540px;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.9;
+    margin-bottom: 32px;
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.hero-checks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px;
+    margin-top: 22px;
+}
+
+.hero-checks .check-item {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.hero-checks .check-mark {
+    color: var(--primary);
+}
+
+.hero-visual {
+    position: relative;
+    min-height: 490px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-image-frame {
+    position: relative;
+    width: 100%;
+    max-width: 510px;
+    height: 465px;
+    overflow: hidden;
+    border-radius: 170px 170px 28px 28px;
+    background: #d8e8ff;
+    box-shadow: 0 25px 65px rgba(30, 78, 150, 0.15);
+}
+
+.hero-image-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 25%;
+}
+
+.floating-card {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: white;
+    padding: 17px 20px;
+    border: 1px solid #edf1f8;
+    border-radius: 15px;
+    box-shadow: 0 12px 35px rgba(22, 53, 100, 0.12);
+}
+
+.floating-card.card-one {
+    left: -25px;
+    bottom: 43px;
+}
+
+.floating-card.card-two {
+    right: -12px;
+    top: 47px;
+}
+
+.floating-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 49px;
+    height: 49px;
+    border-radius: 12px;
+    background: #eaf2ff;
+    color: var(--primary);
+    font-size: 24px;
+}
+
+.floating-card strong {
+    display: block;
+    font-size: 14px;
+}
+
+.floating-card small {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+/* Search panel (also reused, with the same markup, on doctors.php) */
+
+.search-panel {
+    position: relative;
+    z-index: 2;
+    margin-top: -48px;
+}
+
+.search-box {
+    padding: 32px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    box-shadow: 0 15px 45px rgba(34, 72, 130, 0.10);
+}
+
+.search-heading {
+    font-size: 19px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.search-subtitle {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.search-box .form-control,
+.search-box .form-select {
+    min-height: 56px;
+}
+
+/* Trust features */
+
+.trust-section {
+    padding: 65px 0 38px;
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 18px 12px;
+}
+
+.trust-icon {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background: #edf4ff;
+    color: var(--primary);
+    border-radius: 14px;
+    font-size: 26px;
+}
+
+.trust-item strong {
+    display: block;
+    font-size: 14px;
+}
+
+.trust-item small {
+    display: block;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* Homepage uses slightly larger sections than inner pages */
+
+.section {
+    padding: 95px 0;
+}
+
+.section-heading {
+    max-width: 700px;
+    margin-bottom: 48px;
+}
+
+.section-heading h2 {
+    font-size: clamp(32px, 3vw, 43px);
+    margin: 16px 0;
+}
+
+.section-heading p {
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+/* Departments */
+
+.department-card {
+    display: block;
+    height: 100%;
+    padding: 32px 22px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    text-align: center;
+    transition: 0.22s ease;
+}
+
+.department-card:hover {
+    transform: translateY(-5px);
+    border-color: #c4d8ff;
+    box-shadow: 0 15px 35px rgba(32, 83, 160, 0.09);
+}
+
+.department-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 20px;
+    border-radius: 18px;
+    background: #eaf2ff;
+    font-size: 31px;
+}
+
+.department-card h3 {
+    color: var(--navy);
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.department-card p {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0;
+}
+
+.department-card .department-arrow {
+    display: inline-block;
+    color: var(--primary);
+    font-size: 14px;
+    margin-top: 20px;
+    font-weight: 700;
+}
+
+/* How it works */
+
+.step-card {
+    padding: 34px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    height: 100%;
+}
+
+.step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 13px;
+    background: #eaf2ff;
+    color: var(--primary);
+    font-size: 19px;
+    font-weight: 800;
+    margin-bottom: 25px;
+}
+
+.step-card h3 {
+    font-size: 19px;
+    font-weight: 800;
+    margin-bottom: 14px;
+}
+
+.step-card p {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.85;
+    margin: 0;
+}
+
+/* Call to action */
+
+.cta {
+    padding: 25px 0 95px;
+}
+
+.cta-panel {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    padding: 55px;
+    border-radius: 26px;
+    background: linear-gradient(120deg, #e9f2ff, #d8e8ff);
+}
+
+.cta-panel h2 {
+    font-size: clamp(28px, 3vw, 36px);
+    font-weight: 800;
+    margin-bottom: 9px;
+}
+
+.cta-panel p {
+    color: #516785;
+    font-size: 16px;
+    line-height: 1.8;
+    margin: 0;
+}
+
+/* Responsive adjustments */
+
+@media (max-width: 1199px) {
+    .hero {
+        padding: 75px 0 95px;
+    }
+
+    .hero-visual {
+        min-height: 440px;
+    }
+
+    .hero-image-frame {
+        max-width: 450px;
+        height: 420px;
+    }
+
+    .section {
+        padding: 80px 0;
+    }
+}
+
+@media (max-width: 991px) {
+    .hero {
+        padding: 65px 0 85px;
+    }
+
+    .hero h1 {
+        font-size: clamp(40px, 6vw, 58px);
+    }
+
+    .hero-visual {
+        min-height: 420px;
+        margin-top: 25px;
+    }
+
+    .hero-image-frame {
+        max-width: 430px;
+        height: 390px;
+    }
+
+    .floating-card.card-one {
+        left: 0;
+    }
+
+    .floating-card.card-two {
+        right: 0;
+    }
+
+    .search-panel {
+        margin-top: -35px;
+    }
+
+    .search-box {
+        padding: 28px;
+    }
+
+    .section {
+        padding: 70px 0;
+    }
+
+    .cta-panel {
+        padding: 38px;
+    }
+}
+
+@media (max-width: 575px) {
+    .hero {
+        padding: 48px 0 65px;
+    }
+
+    .hero h1 {
+        font-size: 42px;
+        letter-spacing: -1.5px;
+        margin: 21px 0 18px;
+    }
+
+    .hero-description {
+        font-size: 15px;
+        line-height: 1.8;
+    }
+
+    .hero-visual {
+        min-height: 350px;
+        margin-top: 15px;
+    }
+
+    .hero-image-frame {
+        max-width: 100%;
+        height: 325px;
+        border-radius: 120px 120px 23px 23px;
+    }
+
+    .floating-card {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+
+    .floating-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+    }
+
+    .floating-card strong {
+        font-size: 11px;
+    }
+
+    .floating-card small {
+        font-size: 10px;
+    }
+
+    .search-panel {
+        margin-top: -25px;
+    }
+
+    .search-box {
+        padding: 22px;
+    }
+
+    .trust-section {
+        padding: 38px 0 25px;
+    }
+
+    .trust-item {
+        justify-content: flex-start;
+    }
+
+    .section {
+        padding: 58px 0;
+    }
+
+    .section-heading {
+        margin-bottom: 30px;
+    }
+
+    .section-heading h2 {
+        font-size: 31px;
+    }
+
+    .department-card {
+        padding: 24px 12px;
+    }
+
+    .step-card {
+        padding: 25px;
+    }
+
+    .cta {
+        padding: 10px 0 60px;
+    }
+
+    .cta-panel {
+        padding: 28px;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
