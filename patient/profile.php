@@ -11,11 +11,15 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-requireLogin('../');
+requireRole('patient', '../');
 
 $db   = tryGetDB();
 $user = currentUser();
 $errors = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !csrfIsValid()) {
+    $errors['form'] = 'Your session expired. Please submit the form again.';
+}
 
 /* ---------- Load the account row ---------- */
 
@@ -137,6 +141,12 @@ require __DIR__ . '/../includes/header.php';
     <div class="container">
         <div class="row g-4 justify-content-center">
 
+            <?php if (isset($errors['form'])): ?>
+                <div class="col-12">
+                    <div class="alert alert-danger"><?= e($errors['form']) ?></div>
+                </div>
+            <?php endif; ?>
+
             <!-- Summary -->
             <div class="col-lg-4">
                 <div class="info-panel">
@@ -172,6 +182,7 @@ require __DIR__ . '/../includes/header.php';
                     <h2 style="font-size:18px;font-weight:800">Personal details</h2>
 
                     <form method="post" action="profile.php" data-validate>
+                        <?= csrfField() ?>
                         <div class="mb-3">
                             <label for="name" class="form-label">Full name</label>
                             <input type="text" class="form-control" id="name" name="name"
@@ -215,6 +226,13 @@ require __DIR__ . '/../includes/header.php';
                     <h2 style="font-size:18px;font-weight:800">Change password</h2>
 
                     <form method="post" action="profile.php" data-validate>
+                        <?= csrfField() ?>
+                        <!-- Hidden username field: helps password managers and
+                             avoids the browser accessibility warning -->
+                        <input type="email" name="username" id="username"
+                               class="d-none" autocomplete="username"
+                               value="<?= e($user['email']) ?>">
+
                         <div class="mb-3">
                             <label for="current_password" class="form-label">Current password</label>
                             <input type="password" class="form-control" id="current_password"

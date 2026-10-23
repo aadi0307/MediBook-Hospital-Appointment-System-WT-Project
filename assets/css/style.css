@@ -154,6 +154,70 @@ a {
     color: #dc3545;
 }
 
+.nav-user-item {
+    margin-left: 8px;
+}
+
+.nav-user-chip {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 5px 10px 5px 6px;
+    background: #f6f9ff;
+    border: 1px solid #e6edfa;
+    border-radius: 999px;
+}
+
+.nav-user-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 31px;
+    height: 31px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #eaf2ff;
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.nav-user-chip strong,
+.nav-user-chip small {
+    display: block;
+    line-height: 1.15;
+}
+
+.nav-user-chip strong {
+    max-width: 125px;
+    overflow: hidden;
+    color: var(--navy);
+    font-size: 11px;
+    font-weight: 800;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nav-user-chip small {
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+.logout-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+.navbar .logout-form .nav-link {
+    padding: 6px 2px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
 /* 4. Buttons */
 
 .btn-primary-custom {
@@ -527,6 +591,33 @@ footer {
 
     .navbar .nav-link {
         margin: 4px 0;
+    }
+
+    .nav-user-item {
+        margin: 12px 0 0;
+    }
+
+    .nav-user-chip {
+        width: 100%;
+    }
+
+    .nav-user-chip strong {
+        max-width: none;
+    }
+
+    .navbar .logout-form .nav-link {
+        margin: 0;
+    }
+}
+
+@media (max-width: 1399px) and (min-width: 992px) {
+    .navbar .nav-link {
+        margin: 0 7px;
+        font-size: 13px;
+    }
+
+    .nav-user-chip strong {
+        max-width: 90px;
     }
 }
 

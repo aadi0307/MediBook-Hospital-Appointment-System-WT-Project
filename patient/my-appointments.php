@@ -7,7 +7,7 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-requireLogin('../');
+requireRole('patient', '../');
 
 $db = tryGetDB();
 
@@ -16,7 +16,9 @@ $db = tryGetDB();
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_id'])) {
     $cancelId = (int) $_POST['cancel_id'];
 
-    if (!$db) {
+    if (!csrfIsValid()) {
+        flashSet('danger', 'Your session expired. Please try again.');
+    } elseif (!$db) {
         flashSet('danger', 'The database is unavailable, so the appointment could not be cancelled.');
     } else {
         // Only the logged-in patient's own, still active appointments
@@ -81,6 +83,7 @@ $row = function (array $appointment) {
             <?php if ($canCancel): ?>
             <form method="post" action="my-appointments.php" class="d-inline"
                   onsubmit="return confirm('Cancel this appointment?');">
+                <?= csrfField() ?>
                 <input type="hidden" name="cancel_id" value="<?= (int) $appointment['id'] ?>">
                 <button type="submit" class="btn-danger-soft">Cancel</button>
             </form>

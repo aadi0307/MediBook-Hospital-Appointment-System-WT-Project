@@ -17,7 +17,7 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-requireLogin('../');
+requireRole('patient', '../');
 
 $db       = tryGetDB();
 $doctors  = getDoctors($db);
@@ -49,6 +49,9 @@ $bookSlot  = isset($_POST['book_slot']);
 if ($bookSlot) {
     $today = date('Y-m-d');
 
+    if (!csrfIsValid()) {
+        $errors[] = 'Your session expired. Please review the form and try again.';
+    }
     if (!$doctor) {
         $errors[] = 'Please choose a doctor.';
     }
@@ -152,6 +155,7 @@ require __DIR__ . '/../includes/header.php';
 
         <div class="card-soft" style="height:auto;max-width:820px;margin:0 auto">
             <form method="post" action="appointment.php" data-validate id="bookingForm">
+                <?= csrfField() ?>
 
                 <!-- Step 1: doctor + date -->
                 <div class="row g-3 mb-4">

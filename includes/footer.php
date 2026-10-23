@@ -7,6 +7,7 @@
  */
 
 $extraJs = $extraJs ?? [];
+$footerRole = currentRole();
 ?>
 </main>
 
@@ -35,12 +36,28 @@ $extraJs = $extraJs ?? [];
             </div>
 
             <div class="col-6 col-lg-2">
+<?php if ($footerRole === 'admin'): ?>
+                <div class="footer-heading">Administration</div>
+                <div class="footer-links">
+                    <a href="<?= $baseUrl ?>admin/dashboard.php">Dashboard</a>
+                    <a href="<?= $baseUrl ?>admin/doctors.php">Doctors</a>
+                    <a href="<?= $baseUrl ?>admin/patients.php">Patients</a>
+                    <a href="<?= $baseUrl ?>admin/appointments.php">Appointments</a>
+                </div>
+<?php elseif ($footerRole === 'doctor'): ?>
+                <div class="footer-heading">Doctor Area</div>
+                <div class="footer-links">
+                    <a href="<?= $baseUrl ?>doctor/dashboard.php">My Dashboard</a>
+                    <a href="<?= $baseUrl ?>doctor/appointments.php">My Appointments</a>
+                </div>
+<?php else: ?>
                 <div class="footer-heading">Patient Care</div>
                 <div class="footer-links">
                     <a href="<?= $baseUrl ?>doctors.php">Find a Doctor</a>
                     <a href="<?= $baseUrl ?>patient/appointment.php">Book Appointment</a>
                     <a href="<?= $baseUrl ?>patient/my-appointments.php">My Appointments</a>
                 </div>
+<?php endif; ?>
             </div>
 
             <div class="col-lg-3">

@@ -5,6 +5,8 @@
  * database is unavailable, so public pages still render.
  */
 
+const APPOINTMENT_STATUSES = ['pending', 'confirmed', 'completed', 'cancelled'];
+
 /** Escape text before printing it into HTML (prevents XSS). */
 function e(?string $value): string
 {
@@ -54,7 +56,10 @@ function getDepartments(?PDO $db): array
             WHERE is_active = 1
             ORDER BY name';
 
-    return $db->query($sql)->fetchAll();
+    $statement = $db->prepare($sql);
+    $statement->execute();
+
+    return $statement->fetchAll();
 }
 
 /**
@@ -196,6 +201,346 @@ function getPatientAppointments(?PDO $db, int $patientId): array
 
     $statement = $db->prepare($sql);
     $statement->execute([':patient' => $patientId]);
+
+    return $statement->fetchAll();
+}
+
+/**
+ * The doctors-table row belonging to a logged-in doctor user.
+ * Used by every doctor page to scope queries to the correct doctor.
+ */
+function getDoctorByUserId(?PDO $db, int $userId): ?array
+{
+    if (!$db) {
+        return null;
+    }
+
+    $sql = 'SELECT d.id, d.user_id, d.department_id, d.specialization,
+                   d.qualification, d.experience_years, d.consultation_fee,
+                   d.bio, d.is_active,
+                   u.name, u.email, u.phone,
+                   dep.name AS department_name
+            FROM doctors d
+            JOIN users u ON u.id = d.user_id
+            JOIN departments dep ON dep.id = d.department_id
+            WHERE d.user_id = :user
+            LIMIT 1';
+
+    $statement = $db->prepare($sql);
+    $statement->execute([':user' => $userId]);
+    $doctor = $statement->fetch();
+
+    return $doctor ?: null;
+}
+
+/** Appointments for one doctor on one exact date, earliest first. */
+function getDoctorAppointmentsForDate(?PDO $db, int $doctorId, string $date): array
+{
+    if (!$db) {
+        return [];
+    }
+
+    $sql = 'SELECT a.id, a.appointment_date, a.start_time, a.end_time,
+                   a.reason, a.status,
+                   p.name AS patient_name, p.email AS patient_email,
+                   p.phone AS patient_phone
+            FROM appointments a
+            JOIN users p ON p.id = a.patient_id
+            WHERE a.doctor_id = :doctor AND a.appointment_date = :date
+            ORDER BY a.start_time';
+
+    $statement = $db->prepare($sql);
+    $statement->execute([':doctor' => $doctorId, ':date' => $date]);
+
+    return $statement->fetchAll();
+}
+
+/** Active appointments after today for one doctor. */
+function getDoctorUpcomingAppointments(?PDO $db, int $doctorId, int $limit = 8): array
+{
+    if (!$db) {
+        return [];
+    }
+
+    $limit = max(1, min(50, $limit));
+    $sql = 'SELECT a.id, a.appointment_date, a.start_time, a.end_time,
+                   a.reason, a.status,
+                   p.name AS patient_name, p.email AS patient_email,
+                   p.phone AS patient_phone
+            FROM appointments a
+            JOIN users p ON p.id = a.patient_id
+            WHERE a.doctor_id = :doctor
+              AND a.appointment_date > :today
+              AND a.status IN (\'pending\', \'confirmed\')
+            ORDER BY a.appointment_date, a.start_time
+            LIMIT ' . $limit;
+
+    $statement = $db->prepare($sql);
+    $statement->execute([':doctor' => $doctorId, ':today' => date('Y-m-d')]);
+
+    return $statement->fetchAll();
+}
+
+/** All appointments belonging to one doctor, optionally filtered by status. */
+function getDoctorAppointments(?PDO $db, int $doctorId, string $status = ''): array
+{
+    if (!$db) {
+        return [];
+    }
+
+    $sql = 'SELECT a.id, a.appointment_date, a.start_time, a.end_time,
+                   a.reason, a.status, a.created_at,
+                   p.id AS patient_id, p.name AS patient_name,
+                   p.email AS patient_email, p.phone AS patient_phone
+            FROM appointments a
+            JOIN users p ON p.id = a.patient_id
+            WHERE a.doctor_id = :doctor';
+
+    $params = [':doctor' => $doctorId];
+
+    if (in_array($status, APPOINTMENT_STATUSES, true)) {
+        $sql .= ' AND a.status = :status';
+        $params[':status'] = $status;
+    }
+
+    $sql .= ' ORDER BY a.appointment_date DESC, a.start_time DESC';
+
+    $statement = $db->prepare($sql);
+    $statement->execute($params);
+
+    return $statement->fetchAll();
+}
+
+/** Small summary used on the doctor dashboard. */
+function getDoctorAppointmentStats(?PDO $db, int $doctorId): array
+{
+    if (!$db) {
+        return ['today' => 0, 'pending' => 0, 'upcoming' => 0, 'patients' => 0];
+    }
+
+    $sql = 'SELECT
+                COALESCE(SUM(a.appointment_date = :today_date), 0) AS today_count,
+                COALESCE(SUM(a.status = \'pending\'), 0) AS pending_count,
+                COALESCE(SUM(a.appointment_date >= :upcoming_date
+                             AND a.status IN (\'pending\', \'confirmed\')), 0) AS upcoming_count,
+                COUNT(DISTINCT a.patient_id) AS patient_count
+            FROM appointments a
+            WHERE a.doctor_id = :doctor';
+
+    $statement = $db->prepare($sql);
+    $statement->execute([
+        ':today_date'    => date('Y-m-d'),
+        ':upcoming_date' => date('Y-m-d'),
+        ':doctor'        => $doctorId,
+    ]);
+    $row = $statement->fetch() ?: [];
+
+    return [
+        'today'    => (int) ($row['today_count'] ?? 0),
+        'pending'  => (int) ($row['pending_count'] ?? 0),
+        'upcoming' => (int) ($row['upcoming_count'] ?? 0),
+        'patients' => (int) ($row['patient_count'] ?? 0),
+    ];
+}
+
+/**
+ * Appointment list joined with both patient and doctor details.
+ * Used by the admin appointment manager and dashboard.
+ */
+function getAllAppointments(
+    ?PDO $db,
+    string $status = '',
+    string $date = '',
+    int $patientId = 0,
+    int $limit = 0
+): array {
+    if (!$db) {
+        return [];
+    }
+
+    $sql = 'SELECT a.id, a.appointment_date, a.start_time, a.end_time,
+                   a.reason, a.status, a.created_at,
+                   p.id AS patient_id, p.name AS patient_name,
+                   p.email AS patient_email, p.phone AS patient_phone,
+                   d.id AS doctor_id, du.name AS doctor_name,
+                   dep.name AS department_name
+            FROM appointments a
+            JOIN users p ON p.id = a.patient_id
+            JOIN doctors d ON d.id = a.doctor_id
+            JOIN users du ON du.id = d.user_id
+            JOIN departments dep ON dep.id = d.department_id
+            WHERE 1 = 1';
+
+    $params = [];
+
+    if (in_array($status, APPOINTMENT_STATUSES, true)) {
+        $sql .= ' AND a.status = :status';
+        $params[':status'] = $status;
+    }
+
+    if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+        $sql .= ' AND a.appointment_date = :appointment_date';
+        $params[':appointment_date'] = $date;
+    }
+
+    if ($patientId > 0) {
+        $sql .= ' AND a.patient_id = :patient';
+        $params[':patient'] = $patientId;
+    }
+
+    $sql .= ' ORDER BY a.appointment_date DESC, a.start_time DESC';
+
+    if ($limit > 0) {
+        // Cast to int before putting LIMIT into SQL (it cannot be bound).
+        $sql .= ' LIMIT ' . max(1, min(100, $limit));
+    }
+
+    $statement = $db->prepare($sql);
+    $statement->execute($params);
+
+    return $statement->fetchAll();
+}
+
+/** Summary counts for the admin dashboard. */
+function getAdminSummary(?PDO $db): array
+{
+    $defaults = [
+        'patients' => 0, 'doctors' => 0, 'departments' => 0,
+        'appointments' => 0, 'today' => 0, 'pending' => 0, 'upcoming' => 0,
+    ];
+
+    if (!$db) {
+        return $defaults;
+    }
+
+    $sql = 'SELECT
+                (SELECT COUNT(*) FROM users
+                 WHERE role = \'patient\' AND is_active = 1) AS patient_count,
+                (SELECT COUNT(*) FROM doctors
+                 WHERE is_active = 1) AS doctor_count,
+                (SELECT COUNT(*) FROM departments
+                 WHERE is_active = 1) AS department_count,
+                (SELECT COUNT(*) FROM appointments) AS appointment_count,
+                (SELECT COUNT(*) FROM appointments
+                 WHERE appointment_date = :today_date
+                   AND status IN (\'pending\', \'confirmed\')) AS today_count,
+                (SELECT COUNT(*) FROM appointments
+                 WHERE status = \'pending\') AS pending_count,
+                (SELECT COUNT(*) FROM appointments
+                 WHERE appointment_date >= :upcoming_date
+                   AND status IN (\'pending\', \'confirmed\')) AS upcoming_count';
+
+    $statement = $db->prepare($sql);
+    $statement->execute([
+        ':today_date'    => date('Y-m-d'),
+        ':upcoming_date' => date('Y-m-d'),
+    ]);
+    $row = $statement->fetch() ?: [];
+
+    return [
+        'patients'     => (int) ($row['patient_count'] ?? 0),
+        'doctors'      => (int) ($row['doctor_count'] ?? 0),
+        'departments'  => (int) ($row['department_count'] ?? 0),
+        'appointments' => (int) ($row['appointment_count'] ?? 0),
+        'today'        => (int) ($row['today_count'] ?? 0),
+        'pending'      => (int) ($row['pending_count'] ?? 0),
+        'upcoming'     => (int) ($row['upcoming_count'] ?? 0),
+    ];
+}
+
+/** Patient list with appointment totals for the admin area. */
+function getPatients(?PDO $db, string $search = ''): array
+{
+    if (!$db) {
+        return [];
+    }
+
+    $sql = 'SELECT u.id, u.name, u.email, u.phone, u.is_active, u.created_at,
+                   COUNT(a.id) AS appointment_count,
+                   MAX(a.appointment_date) AS last_appointment
+            FROM users u
+            LEFT JOIN appointments a ON a.patient_id = u.id
+            WHERE u.role = \'patient\'';
+
+    $params = [];
+
+    if ($search !== '') {
+        $sql .= ' AND (u.name LIKE :name OR u.email LIKE :email)';
+        $params[':name']  = '%' . $search . '%';
+        $params[':email'] = '%' . $search . '%';
+    }
+
+    $sql .= ' GROUP BY u.id, u.name, u.email, u.phone, u.is_active, u.created_at
+              ORDER BY u.name';
+
+    $statement = $db->prepare($sql);
+    $statement->execute($params);
+
+    return $statement->fetchAll();
+}
+
+/** Every doctor, including inactive ones, for admin management. */
+function getAllDoctorsAdmin(?PDO $db): array
+{
+    if (!$db) {
+        return [];
+    }
+
+    $sql = 'SELECT d.id, d.user_id, d.department_id, d.specialization,
+                   d.qualification, d.experience_years, d.consultation_fee,
+                   d.bio, d.is_active, d.created_at,
+                   u.name, u.email, u.phone, u.is_active AS user_active,
+                   dep.name AS department_name
+            FROM doctors d
+            JOIN users u ON u.id = d.user_id
+            JOIN departments dep ON dep.id = d.department_id
+            ORDER BY u.name';
+
+    $statement = $db->prepare($sql);
+    $statement->execute();
+
+    return $statement->fetchAll();
+}
+
+/** Every department, including inactive ones, for admin management. */
+function getAllDepartmentsAdmin(?PDO $db): array
+{
+    if (!$db) {
+        return [];
+    }
+
+    $sql = 'SELECT d.id, d.name, d.description, d.is_active, d.created_at,
+                   COUNT(doc.id) AS doctor_count
+            FROM departments d
+            LEFT JOIN doctors doc ON doc.department_id = d.id
+            GROUP BY d.id, d.name, d.description, d.is_active, d.created_at
+            ORDER BY d.name';
+
+    $statement = $db->prepare($sql);
+    $statement->execute();
+
+    return $statement->fetchAll();
+}
+
+/** All working schedules with doctor and department names. */
+function getAllSchedulesAdmin(?PDO $db): array
+{
+    if (!$db) {
+        return [];
+    }
+
+    $sql = 'SELECT s.id, s.doctor_id, s.day_of_week, s.start_time, s.end_time,
+                   s.slot_duration_minutes, s.is_available,
+                   u.name AS doctor_name,
+                   dep.name AS department_name
+            FROM schedules s
+            JOIN doctors d ON d.id = s.doctor_id
+            JOIN users u ON u.id = d.user_id
+            JOIN departments dep ON dep.id = d.department_id
+            ORDER BY u.name, s.day_of_week, s.start_time';
+
+    $statement = $db->prepare($sql);
+    $statement->execute();
 
     return $statement->fetchAll();
 }

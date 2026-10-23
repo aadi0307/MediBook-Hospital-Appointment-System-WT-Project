@@ -1,0 +1,292 @@
+/* =====================================================================
+   MediBook - login page and shared role selector
+   ===================================================================== */
+
+.login-section {
+    position: relative;
+    padding: 70px 0 85px;
+    background:
+        radial-gradient(circle at 8% 15%, #dceaff 0%, transparent 30%),
+        radial-gradient(circle at 90% 80%, #e5fbf7 0%, transparent 30%),
+        var(--background);
+    overflow: hidden;
+}
+
+.login-intro {
+    max-width: 470px;
+}
+
+.login-intro h1 {
+    margin: 14px 0 18px;
+    font-size: clamp(34px, 4vw, 52px);
+    line-height: 1.08;
+    font-weight: 800;
+    letter-spacing: -2px;
+}
+
+.login-intro > p {
+    max-width: 420px;
+    color: var(--muted);
+    font-size: 15px;
+}
+
+.login-role-list {
+    display: grid;
+    gap: 10px;
+    margin-top: 28px;
+}
+
+.login-role-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    backdrop-filter: blur(8px);
+}
+
+.login-role-item > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: #eaf2ff;
+    color: var(--primary);
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.login-role-item strong,
+.login-role-item small {
+    display: block;
+}
+
+.login-role-item strong {
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.login-role-item small {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.login-role-item.role-doctor > span {
+    background: #e6fffa;
+    color: #0f766e;
+}
+
+.login-role-item.role-admin > span {
+    background: #eef2ff;
+    color: #4338ca;
+}
+
+.auth-card-wide {
+    max-width: 520px;
+    padding: 36px;
+}
+
+.role-picker {
+    margin: 0 0 20px;
+    padding: 0;
+    border: 0;
+}
+
+.role-picker legend {
+    margin-bottom: 9px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.role-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px;
+}
+
+.role-option {
+    cursor: pointer;
+}
+
+.role-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.role-option-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 88px;
+    padding: 12px 8px;
+    border: 1px solid #dce5f2;
+    border-radius: 12px;
+    background: #fff;
+    color: var(--navy);
+    transition: 0.18s ease;
+}
+
+.role-option-card strong {
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.role-option-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: #f1f5fb;
+    color: #64748b;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.role-option:hover .role-option-card {
+    border-color: #b9cff2;
+}
+
+.role-option input:checked + .role-option-card {
+    border-color: var(--primary);
+    background: #f5f9ff;
+    box-shadow: 0 0 0 3px rgba(23, 101, 233, 0.11);
+    color: var(--primary);
+}
+
+.role-option.role-patient input:checked + .role-option-card {
+    border-color: #1765e9;
+    background: #f5f9ff;
+    color: #1765e9;
+}
+
+.role-option.role-doctor input:checked + .role-option-card {
+    border-color: #0f766e;
+    background: #f6fffd;
+    color: #0f766e;
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.11);
+}
+
+.role-option.role-admin input:checked + .role-option-card {
+    border-color: #4338ca;
+    background: #f8f8ff;
+    color: #4338ca;
+    box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.11);
+}
+
+.role-option input:checked + .role-option-card .role-option-icon {
+    background: currentColor;
+    color: #fff;
+}
+
+.role-option input:focus-visible + .role-option-card {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.password-field {
+    position: relative;
+}
+
+.password-field .form-control {
+    padding-right: 70px;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    padding: 5px 7px;
+    border: 0;
+    background: transparent;
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.auth-note {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 12px;
+}
+
+.demo-accounts {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.demo-accounts summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--navy);
+}
+
+.demo-account-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.demo-account-grid > div {
+    padding: 9px 10px;
+    background: var(--background);
+    border-radius: 9px;
+}
+
+.demo-account-grid strong,
+.demo-account-grid span {
+    display: block;
+}
+
+.demo-account-grid span {
+    color: var(--muted);
+    word-break: break-word;
+}
+
+.demo-password {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 575px) {
+    .login-section {
+        padding: 38px 0 55px;
+    }
+
+    .auth-card-wide {
+        padding: 24px;
+    }
+
+    .role-options {
+        gap: 6px;
+    }
+
+    .role-option-card {
+        min-height: 78px;
+    }
+
+    .role-option-card strong {
+        font-size: 11px;
+    }
+
+    .demo-account-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .demo-password {
+        grid-column: auto;
+    }
+}

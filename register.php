@@ -7,14 +7,15 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/functions.php';
 
-// Already logged in? Nothing to do here.
-if (isLoggedIn()) {
-    header('Location: patient/my-appointments.php');
-    exit;
-}
+// Already logged in? Send the user to the dashboard for their role.
+redirectLoggedInUser();
 
 $db    = tryGetDB();
 $errors = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !csrfIsValid()) {
+    $errors['form'] = 'Your session expired. Please submit the form again.';
+}
 
 $old = [
     'name'     => trim((string) ($_POST['name'] ?? '')),
@@ -75,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]);
 
             flashSet('success', 'Your account has been created. Welcome to MediBook!');
-            header('Location: patient/my-appointments.php');
+            header('Location: patient/dashboard.php');
             exit;
         }
     }
@@ -102,7 +103,12 @@ require __DIR__ . '/includes/header.php';
             <h1>Register</h1>
             <p class="auth-subtitle">Fill in your details to create a patient account.</p>
 
+            <?php if (isset($errors['form'])): ?>
+                <div class="alert alert-danger"><?= e($errors['form']) ?></div>
+            <?php endif; ?>
+
             <form method="post" action="register.php" data-validate>
+                <?= csrfField() ?>
                 <div class="mb-3">
                     <label for="name" class="form-label">Full name</label>
                     <input type="text" class="form-control" id="name" name="name"
